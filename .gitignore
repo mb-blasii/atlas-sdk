@@ -15,6 +15,9 @@
 /*.ipdb
 /*.pch
 
+# CLion files
+.idea/
+
 # Visual Studio files
 .vs/
 *.suo
