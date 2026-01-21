@@ -6,8 +6,6 @@
 #include <atlas/core/math/constants.h>
 
 namespace atlas::core::quat {
-    using namespace vec;
-    using namespace math;
 
     struct Quat {
         float x, y, z, w;
@@ -20,9 +18,6 @@ namespace atlas::core::quat {
         }
 
         Quat(const Quat &other) = default;
-
-        // Identity
-        static Quat identity() { return Quat(0, 0, 0, 1); }
 
         // Operators
 #pragma region operators
@@ -124,18 +119,20 @@ namespace atlas::core::quat {
 
 #pragma region quaternion functions
 
+    inline Quat identity() { return Quat(0, 0, 0, 1); }
+
     // Conjugate & Inverse
     inline Quat conjugate(const Quat &q) { return Quat(-q.x, -q.y, -q.z, q.w); }
 
     inline Quat inverse(const Quat &q) {
         float l2 = q.lengthSq();
-        assert(l2 > EPS && "Cannot invert zero-length quaternion");
+        assert(l2 > math::EPS && "Cannot invert zero-length quaternion");
         Quat c = conjugate(q);
         return Quat(c.x / l2, c.y / l2, c.z / l2, c.w / l2);
     }
 
     // From Euler angles (XYZ order, radians)
-    inline Quat fromEuler(const Vec3 &euler) {
+    inline Quat fromEuler(const vec::Vec3 &euler) {
         float cx = std::cos(euler.x * 0.5f), sx = std::sin(euler.x * 0.5f);
         float cy = std::cos(euler.y * 0.5f), sy = std::sin(euler.y * 0.5f);
         float cz = std::cos(euler.z * 0.5f), sz = std::sin(euler.z * 0.5f);
@@ -149,8 +146,8 @@ namespace atlas::core::quat {
     }
 
     // To Euler angles (XYZ order, radians)
-    inline Vec3 toEuler(const Quat &q) {
-        Vec3 euler;
+    inline vec::Vec3 toEuler(const Quat &q) {
+        vec::Vec3 euler;
         // roll (X)
         float sinr_cosp = 2.0f * (q.w * q.x + q.y * q.z);
         float cosr_cosp = 1.0f - 2.0f * (q.x * q.x + q.y * q.y);
@@ -158,7 +155,7 @@ namespace atlas::core::quat {
 
         // pitch (Y)
         if (float sinp = 2.0f * (q.w * q.y - q.z * q.x); std::abs(sinp) >= 1)
-            euler.y = std::copysign(HALF_PI, sinp);
+            euler.y = std::copysign(math::HALF_PI, sinp);
         else
             euler.y = std::asin(sinp);
 
@@ -206,10 +203,10 @@ namespace atlas::core::quat {
     }
 
     // Rotate a vector
-    inline Vec3 rotate(const Vec3 &v, const Quat &q) {
+    inline vec::Vec3 rotate(const vec::Vec3 &v, const Quat &q) {
         Quat qv(v.x, v.y, v.z, 0);
         Quat res = q * qv * inverse(q);
-        return Vec3(res.x, res.y, res.z);
+        return vec::Vec3(res.x, res.y, res.z);
     }
 
 #pragma endregion
