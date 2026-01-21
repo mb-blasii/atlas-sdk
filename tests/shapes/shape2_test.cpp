@@ -1,0 +1,128 @@
+#include <iostream>
+#include <cassert>
+
+#include <tests/shapes/shape2_test.h>
+
+using namespace atlas::core::shape2;
+using atlas::core::vec::Vec2;
+
+// -------------------------------------------------
+// RECT
+// -------------------------------------------------
+
+void testRectRect()
+{
+    Rect a{ {0.0f, 0.0f}, {1.0f, 1.0f} };
+    Rect b{ {1.5f, 0.0f}, {1.0f, 1.0f} };
+    Rect c{ {3.5f, 0.0f}, {1.0f, 1.0f} };
+
+    assert(overlap(a, b) && "Rect-Rect should overlap");
+    assert(!overlap(a, c) && "Rect-Rect should NOT overlap");
+}
+
+// -------------------------------------------------
+// CIRCLE
+// -------------------------------------------------
+
+void testCircleCircle()
+{
+    Circle a{ {0.0f, 0.0f}, 1.0f };
+    Circle b{ {1.5f, 0.0f}, 1.0f };
+    Circle c{ {3.0f, 0.0f}, 1.0f };
+
+    assert(overlap(a, b) && "Circle-Circle should overlap");
+    assert(!overlap(a, c) && "Circle-Circle should NOT overlap");
+}
+
+// -------------------------------------------------
+// RECT / CIRCLE
+// -------------------------------------------------
+
+void testRectCircle()
+{
+    Rect r{ {0.0f, 0.0f}, {1.0f, 1.0f} };
+    Circle c1{ {0.5f, 0.5f}, 0.5f };
+    Circle c2{ {3.0f, 3.0f}, 0.5f };
+
+    assert(overlap(r, c1) && "Rect-Circle should overlap");
+    assert(!overlap(r, c2) && "Rect-Circle should NOT overlap");
+}
+
+// -------------------------------------------------
+// CAPSULE / CIRCLE
+// -------------------------------------------------
+
+void testCapsuleCircle()
+{
+    Capsule2D cap{
+        { -1.0f, 0.0f },
+        {  1.0f, 0.0f },
+        0.5f
+    };
+
+    Circle c1{ {0.0f, 0.2f}, 0.3f };
+    Circle c2{ {0.0f, 2.0f}, 0.3f };
+
+    assert(overlap(cap, c1) && "Capsule-Circle should overlap");
+    assert(!overlap(cap, c2) && "Capsule-Circle should NOT overlap");
+}
+
+// -------------------------------------------------
+// CAPSULE / RECT
+// -------------------------------------------------
+
+void testCapsuleRect()
+{
+    Capsule2D cap{
+        { -1.0f, 0.0f },
+        {  1.0f, 0.0f },
+        0.5f
+    };
+
+    Rect r1{ {0.0f, 0.0f}, {0.5f, 0.5f} };
+    Rect r2{ {0.0f, 2.0f}, {0.5f, 0.5f} };
+
+    assert(overlap(cap, r1) && "Capsule-Rect should overlap");
+    assert(!overlap(cap, r2) && "Capsule-Rect should NOT overlap");
+}
+
+// -------------------------------------------------
+// CAPSULE / CAPSULE
+// -------------------------------------------------
+
+void testCapsuleCapsule()
+{
+    Capsule2D a{
+        { -1.0f, 0.0f },
+        {  1.0f, 0.0f },
+        0.5f
+    };
+
+    Capsule2D b{
+        { -1.0f, 0.4f },
+        {  1.0f, 0.4f },
+        0.5f
+    };
+
+    Capsule2D c{
+        { -1.0f, 3.0f },
+        {  1.0f, 3.0f },
+        0.5f
+    };
+
+    assert(overlap(a, b) && "Capsule-Capsule should overlap");
+    assert(!overlap(a, c) && "Capsule-Capsule should NOT overlap");
+}
+
+int main()
+{
+    testRectRect();
+    testCircleCircle();
+    testRectCircle();
+    testCapsuleCircle();
+    testCapsuleRect();
+    testCapsuleCapsule();
+
+    std::cout << "[shape2] All tests passed.\n";
+    return 0;
+}
