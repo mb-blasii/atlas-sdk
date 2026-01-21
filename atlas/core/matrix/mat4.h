@@ -1,8 +1,9 @@
 #pragma once
 #include <cmath>
-#include <vectors/vec3.h>
+#include <atlas/core/vectors/vec3.h>
 
 namespace atlas::core::mat4 {
+
     struct Mat4 {
         float m[16]{};
 
@@ -34,7 +35,8 @@ namespace atlas::core::mat4 {
         }
     };
 
-    // Functions
+#pragma region functions
+
     inline Mat4 identity() {
         Mat4 mat;
         mat.setIdentity();
@@ -131,4 +133,6 @@ namespace atlas::core::mat4 {
                 result(r, c) = mat(c, r);
         return result;
     }
+
+#pragma endregion
 }

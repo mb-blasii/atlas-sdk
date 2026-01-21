@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <cstdio>
+#include <cassert>
 
 namespace atlas::core::vec {
 
@@ -23,6 +24,20 @@ namespace atlas::core::vec {
         Vec3& operator*=(float scalar) { x *= scalar; y *= scalar; z *= scalar; return *this; }
         Vec3& operator/=(float scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
 
+        float& operator[](int i) {
+            assert(i>=0 && i<3);
+            if(i==0) return x;
+            if(i==1) return y;
+            return z;
+        }
+
+        const float& operator[](int i) const {
+            assert(i>=0 && i<3);
+            if(i==0) return x;
+            if(i==1) return y;
+            return z;
+        }
+
         // Functions
         float length() const { return std::sqrt(x * x + y * y + z * z); }
         float lengthSq() const { return x * x + y * y + z * z; }
@@ -30,6 +45,8 @@ namespace atlas::core::vec {
         void normalize() { float l = length(); if (l != 0) { x /= l; y /= l; z /= l; z /= l; } }
 
     };
+
+#pragma region functions
 
     float dot(const Vec3& v1, const Vec3& v2) { return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z; }
     Vec3 cross(const Vec3& v1, const Vec3& v2) { return Vec3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x); }
@@ -44,5 +61,7 @@ namespace atlas::core::vec {
         snprintf(buffer, sizeof(buffer), "(%.2f, %.2f, %.2f)", v.x, v.y, v.z);
         return buffer;
     }
+
+#pragma endregion
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <cstdio>
+#include <cassert>
 
 namespace atlas::core::vec {
 
@@ -23,6 +24,18 @@ namespace atlas::core::vec {
         Vec2& operator*=(float s) { x *= s; y *= s; return *this; }
         Vec2& operator/=(float scalar) { x /= scalar; y /= scalar; return *this; }
 
+        float& operator[](int i) {
+            assert(i>=0 && i<2);
+            if(i==0) return x;
+            return y;
+        }
+
+        const float& operator[](int i) const {
+            assert(i>=0 && i<2);
+            if(i==0) return x;
+            return y;
+        }
+
         // Functions
         float length() const { return std::sqrt(x * x + y * y); }
         float lengthSq() const { return x * x + y * y; }
@@ -31,17 +44,21 @@ namespace atlas::core::vec {
 
     };
 
-    float dot(const Vec2& v1, const Vec2& v2) { return v1.x * v2.x + v1.y * v2.y; }
+#pragma region functions
 
-    float distance(const Vec2& v1, const Vec2& v2) { return (v1 - v2).length(); }
-    float distanceSq(const Vec2& v1, const Vec2& v2) { return (v1 - v2).lengthSq(); }
+    inline float dot(const Vec2& v1, const Vec2& v2) { return v1.x * v2.x + v1.y * v2.y; }
 
-    Vec2 lerp(const Vec2& a, const Vec2& b, float t) { return a + (b - a) * t; }
+    inline float distance(const Vec2& v1, const Vec2& v2) { return (v1 - v2).length(); }
+    inline float distanceSq(const Vec2& v1, const Vec2& v2) { return (v1 - v2).lengthSq(); }
 
-    char* toString(const Vec2& v) {
+    inline Vec2 lerp(const Vec2& a, const Vec2& b, float t) { return a + (b - a) * t; }
+
+    inline char* toString(const Vec2& v) {
         static char buffer[40];
         snprintf(buffer, sizeof(buffer), "(%.2f, %.2f)", v.x, v.y);
         return buffer;
     }
+
+#pragma endregion
 
 }
