@@ -1,6 +1,7 @@
 #pragma once
 #include <cmath>
 #include <atlas/core/vectors/vec3.h>
+#include <atlas/core/quaternion/quaternion.h>
 
 namespace atlas::core::mat4 {
 
@@ -71,26 +72,37 @@ namespace atlas::core::mat4 {
         return mat;
     }
 
-    inline Mat4 rotate(const vec::Vec3 &r) {
-        float cx = std::cos(r.x), sx = std::sin(r.x);
-        float cy = std::cos(r.y), sy = std::sin(r.y);
-        float cz = std::cos(r.z), sz = std::sin(r.z);
-
+    inline Mat4 rotate(const quat::Quat &r) {
         Mat4 mat = identity();
 
-        mat(0,0) = cy * cz;
-        mat(0,1) = -cy * sz;
-        mat(0,2) = sy;
+        float xx = r.x * r.x;
+        float yy = r.y * r.y;
+        float zz = r.z * r.z;
+        float xy = r.x * r.y;
+        float xz = r.x * r.z;
+        float yz = r.y * r.z;
+        float wx = r.w * r.x;
+        float wy = r.w * r.y;
+        float wz = r.w * r.z;
 
-        mat(1,0) = sx * sy * cz + cx * sz;
-        mat(1,1) = -sx * sy * sz + cx * cz;
-        mat(1,2) = -sx * cy;
+        mat(0,0) = 1 - 2*(yy + zz);
+        mat(0,1) = 2*(xy - wz);
+        mat(0,2) = 2*(xz + wy);
 
-        mat(2,0) = -cx * sy * cz + sx * sz;
-        mat(2,1) = cx * sy * sz + sx * cz;
-        mat(2,2) = cx * cy;
+        mat(1,0) = 2*(xy + wz);
+        mat(1,1) = 1 - 2*(xx + zz);
+        mat(1,2) = 2*(yz - wx);
+
+        mat(2,0) = 2*(xz - wy);
+        mat(2,1) = 2*(yz + wx);
+        mat(2,2) = 1 - 2*(xx + yy);
 
         return mat;
+    }
+
+    inline Mat4 rotate(const vec::Vec3 &r) {
+        quat::Quat q = quat::fromEuler(r);
+        return rotate(q);
     }
 
     inline Mat4 rotate(float x, float y, float z) {
@@ -98,12 +110,17 @@ namespace atlas::core::mat4 {
         return rotate(t);
     }
 
-    inline Mat4 TRS(const vec::Vec3 &t, const vec::Vec3 &r, const vec::Vec3 &s) {
+    inline Mat4 TRS(const vec::Vec3 &t, const quat::Quat &r, const vec::Vec3 &s) {
         Mat4 S = scale(s);
         Mat4 R = rotate(r);
         Mat4 T = translate(t);
 
         return mul(T, mul(R, S));
+    }
+
+    inline Mat4 TRS(const vec::Vec3 &t, const vec::Vec3 &r, const vec::Vec3 &s) {
+        quat::Quat q = quat::fromEuler(r);
+        return TRS(t, q, s);
     }
 
     inline vec::Vec3 transformPoint(const Mat4 &mat, const vec::Vec3 &v) {

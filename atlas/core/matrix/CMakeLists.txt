@@ -4,4 +4,5 @@ add_library(matrix INTERFACE
 target_link_libraries(matrix
         INTERFACE
         vectors
+        quaternion
 )
