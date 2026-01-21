@@ -42,7 +42,7 @@ namespace atlas::core::vec {
         float length() const { return std::sqrt(x * x + y * y + z * z); }
         float lengthSq() const { return x * x + y * y + z * z; }
         Vec3 normalized() const { float l = length(); return l != 0 ? Vec3(x / l, y / l, z / l) : Vec3(0, 0, 0); }
-        void normalize() { float l = length(); if (l != 0) { x /= l; y /= l; z /= l; z /= l; } }
+        void normalize() { float l = length(); if (l != 0) { x /= l; y /= l; z /= l; } }
 
     };
 
