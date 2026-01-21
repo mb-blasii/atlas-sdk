@@ -10,8 +10,3 @@ add_library(vectors INTERFACE
         vec2.h
         vec3.h)
 
-target_include_directories(vectors
-        INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)

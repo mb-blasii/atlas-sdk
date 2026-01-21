@@ -2,7 +2,6 @@
 //
 
 #include "AtlasSDK.h"
-
 using namespace std;
 
 int main()

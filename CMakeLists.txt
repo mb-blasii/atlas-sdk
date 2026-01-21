@@ -18,6 +18,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Add subdirectories for each core module
 add_subdirectory(core/vectors)
+add_subdirectory(core/matrix)
 # add_subdirectory(core/shapes)
 # add_subdirectory(core/transform)
 
