@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cassert>
 
-#include <tests/shapes/shape2_test.h>
+#include "shape2_test.h"
 
-using namespace atlas::core::shape2;
+using namespace atlas::core::shape;
 using atlas::core::vec::Vec2;
 
 // -------------------------------------------------

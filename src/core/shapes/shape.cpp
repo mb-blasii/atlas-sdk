@@ -1,38 +1,16 @@
-#pragma once
+#include <atlas/core/shapes/shape.h>
+
 #include <cmath>
 #include <algorithm>
 #include <array>
-#include <atlas/core/vectors/vec3.h>
 #include <atlas/core/math/math.h>
 
 namespace atlas::core::shape {
     using namespace vec;
 
-    struct Sphere {
-        Vec3 center;
-        float radius;
-    };
-
-    struct Box {
-        Vec3 center;
-        Vec3 halfExtents;
-    };
-
-    struct OBB {
-        Vec3 center;
-        Vec3 halfExtents;
-        Vec3 axes[3]; // Local orientation axes (normalized)
-    };
-
-    struct Capsule {
-        Vec3 a;
-        Vec3 b;
-        float radius;
-    };
-
 #pragma region utility functions
 
-    inline float distancePointSegment(const Vec3& p, const Vec3& a, const Vec3& b) {
+    float distancePointSegment(const Vec3& p, const Vec3& a, const Vec3& b) {
         Vec3 ab = b - a;
         float abLenSq = ab.lengthSq();
         if (abLenSq == 0.0f) return (p - a).length();
@@ -43,7 +21,7 @@ namespace atlas::core::shape {
         return (p - closest).length();
     }
 
-    inline Vec3 clampPointBox(const Vec3& p, const Box& b) {
+    Vec3 clampPointBox(const Vec3& p, const Box& b) {
         Vec3 min = b.center - b.halfExtents;
         Vec3 max = b.center + b.halfExtents;
         return Vec3{
@@ -54,7 +32,7 @@ namespace atlas::core::shape {
     }
 
     // OBB-SAT UTILITY
-    inline bool overlapOnAxis(const OBB& a, const OBB& b, const Vec3& axis) {
+    bool overlapOnAxis(const OBB& a, const OBB& b, const Vec3& axis) {
         if (math::isZero(axis.lengthSq())) return true; // skip near-zero axis
 
         // Project OBB a
@@ -75,20 +53,20 @@ namespace atlas::core::shape {
 #pragma region overlap
 
     // Sphere-Sphere
-    inline bool overlap(const Sphere& a, const Sphere& b) {
+    bool overlap(const Sphere& a, const Sphere& b) {
         float r = a.radius + b.radius;
         return (a.center - b.center).lengthSq() <= r * r;
     }
 
     // Box-Box (AABB)
-    inline bool overlap(const Box& a, const Box& b) {
+    bool overlap(const Box& a, const Box& b) {
         return std::abs(a.center.x - b.center.x) <= a.halfExtents.x + b.halfExtents.x &&
                std::abs(a.center.y - b.center.y) <= a.halfExtents.y + b.halfExtents.y &&
                std::abs(a.center.z - b.center.z) <= a.halfExtents.z + b.halfExtents.z;
     }
 
     // Capsule-Capsule
-    inline bool overlap(const Capsule& a, const Capsule& b) {
+    bool overlap(const Capsule& a, const Capsule& b) {
         float d1 = distancePointSegment(a.a, b.a, b.b);
         float d2 = distancePointSegment(a.b, b.a, b.b);
         float d3 = distancePointSegment(b.a, a.a, a.b);
@@ -98,7 +76,7 @@ namespace atlas::core::shape {
     }
 
     // OBB-OBB using SAT
-    inline bool overlap(const OBB& a, const OBB& b) {
+    bool overlap(const OBB& a, const OBB& b) {
         std::array<Vec3, 15> axes;
 
         // 3 face normals from each OBB
@@ -121,21 +99,21 @@ namespace atlas::core::shape {
     }
 
     // Sphere-Box (AABB)
-    inline bool overlap(const Sphere& s, const Box& b) {
+    bool overlap(const Sphere& s, const Box& b) {
         Vec3 closest = clampPointBox(s.center, b);
         return (closest - s.center).lengthSq() <= s.radius * s.radius;
     }
-    inline bool overlap(const Box& b, const Sphere& s) { return overlap(s, b); }
+    bool overlap(const Box& b, const Sphere& s) { return overlap(s, b); }
 
 
     // Capsule-Sphere
-    inline bool overlap(const Capsule& c, const Sphere& s) {
+    bool overlap(const Capsule& c, const Sphere& s) {
         return distancePointSegment(s.center, c.a, c.b) <= s.radius + c.radius;
     }
-    inline bool overlap(const Sphere& s, const Capsule& c) { return overlap(c, s); }
+    bool overlap(const Sphere& s, const Capsule& c) { return overlap(c, s); }
 
     // Capsule-Box (AABB)
-    inline bool overlap(const Capsule& c, const Box& b) {
+    bool overlap(const Capsule& c, const Box& b) {
         Vec3 closestPoint{};
         for (int i = 0; i < 3; ++i) {
             float minB = b.center[i] - b.halfExtents[i];
@@ -146,10 +124,10 @@ namespace atlas::core::shape {
         }
         return distancePointSegment(closestPoint, c.a, c.b) <= c.radius;
     }
-    inline bool overlap(const Box& b, const Capsule& c) { return overlap(c, b); }
+    bool overlap(const Box& b, const Capsule& c) { return overlap(c, b); }
 
     // Sphere-OBB
-    inline bool overlap(const Sphere& s, const OBB& o) {
+    bool overlap(const Sphere& s, const OBB& o) {
         // Transform sphere center to OBB local space
         Vec3 local;
         Vec3 d = s.center - o.center;
@@ -167,10 +145,10 @@ namespace atlas::core::shape {
         Vec3 diff = local - closest;
         return diff.lengthSq() <= s.radius * s.radius;
     }
-    inline bool overlap(const OBB& o, const Sphere& s) { return overlap(s, o); }
+    bool overlap(const OBB& o, const Sphere& s) { return overlap(s, o); }
 
     // Box(AABB)-OBB
-    inline bool overlap(const Box& b, const OBB& o) {
+    bool overlap(const Box& b, const OBB& o) {
         // Convert Box to OBB with axes = world axes
         OBB obbB;
         obbB.center = b.center;
@@ -180,10 +158,10 @@ namespace atlas::core::shape {
         obbB.axes[2] = Vec3{0,0,1};
         return overlap(obbB, o);
     }
-    inline bool overlap(const OBB& o, const Box& b) { return overlap(b, o); }
+    bool overlap(const OBB& o, const Box& b) { return overlap(b, o); }
 
     // Capsule-OBB
-    inline bool overlap(const Capsule& c, const OBB& o) {
+    bool overlap(const Capsule& c, const OBB& o) {
         // Transform capsule endpoints into OBB local space
         auto toLocal = [&](const Vec3& p) -> Vec3 {
             Vec3 d = p - o.center;
@@ -222,7 +200,7 @@ namespace atlas::core::shape {
         float dist = distancePointSegment(closestPoint, localA, localB);
         return dist <= c.radius;
     }
-    inline bool overlap(const OBB& o, const Capsule& c) { return overlap(c, o); }
+    bool overlap(const OBB& o, const Capsule& c) { return overlap(c, o); }
 
 #pragma endregion
 
