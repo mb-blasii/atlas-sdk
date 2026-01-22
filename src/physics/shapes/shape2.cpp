@@ -1,10 +1,10 @@
-#include <atlas/core/shapes/shape2.h>
+#include <atlas/physics/shapes/shape2.h>
 
 #include <cmath>
 #include <algorithm>
 
-namespace atlas::core::shape {
-    using namespace vec;
+namespace atlas::physics::shape {
+    using namespace core::vec;
 
 #pragma region utility functions
 

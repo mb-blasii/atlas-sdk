@@ -1,12 +1,12 @@
-#include <atlas/core/shapes/shape.h>
+#include <atlas/physics/shapes/shape.h>
 
 #include <cmath>
 #include <algorithm>
 #include <array>
 #include <atlas/core/math/math.h>
 
-namespace atlas::core::shape {
-    using namespace vec;
+namespace atlas::physics::shape {
+    using namespace core::vec;
 
 #pragma region utility functions
 
@@ -33,7 +33,7 @@ namespace atlas::core::shape {
 
     // OBB-SAT UTILITY
     bool overlapOnAxis(const OBB& a, const OBB& b, const Vec3& axis) {
-        if (math::isZero(axis.lengthSq())) return true; // skip near-zero axis
+        if (core::math::isZero(axis.lengthSq())) return true; // skip near-zero axis
 
         // Project OBB a
         float aProj = 0.0f;

@@ -1,8 +1,9 @@
 #include "shape_test.h"
 #include <iostream>
 #include <cassert>
+#include <atlas/physics/shapes/shape.h>
 
-using namespace atlas::core::shape;
+using namespace atlas::physics::shape;
 
 // -----------------------------
 // Sphere-Sphere

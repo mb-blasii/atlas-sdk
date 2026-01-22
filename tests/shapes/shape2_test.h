@@ -1,5 +1,4 @@
 #pragma once
-#include <atlas/core/shapes/shape2.h>
 
 // -------------------------------------------------
 // SHAPE2 TESTS

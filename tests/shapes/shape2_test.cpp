@@ -2,8 +2,9 @@
 #include <cassert>
 
 #include "shape2_test.h"
+#include <atlas/physics/shapes/shape2.h>
 
-using namespace atlas::core::shape;
+using namespace atlas::physics::shape;
 using atlas::core::vec::Vec2;
 
 // -------------------------------------------------

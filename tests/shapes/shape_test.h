@@ -1,5 +1,4 @@
 #pragma once
-#include <atlas/core/shapes/shape.h>
 
 void testSphereSphere();
 

@@ -1,29 +1,29 @@
 #pragma once
 #include <atlas/core/vectors/vec2.h>
 
-namespace atlas::core::shape {
+namespace atlas::physics::shape {
 
     struct Rect {
-        vec::Vec2 center;
-        vec::Vec2 halfExtents;
+        core::vec::Vec2 center;
+        core::vec::Vec2 halfExtents;
     };
 
     struct Circle {
-        vec::Vec2 center;
+        core::vec::Vec2 center;
         float radius;
     };
 
     struct Capsule2D {
-        vec::Vec2 a;
-        vec::Vec2 b;
+        core::vec::Vec2 a;
+        core::vec::Vec2 b;
         float radius;
     };
 
 #pragma region utility functions
 
-    float distancePointSegmentSq(const vec::Vec2 &p, const vec::Vec2 &a, const vec::Vec2 &b);
+    float distancePointSegmentSq(const core::vec::Vec2 &p, const core::vec::Vec2 &a, const core::vec::Vec2 &b);
 
-    vec::Vec2 clampPointRect(const vec::Vec2 &p, const Rect &r);
+    core::vec::Vec2 clampPointRect(const core::vec::Vec2 &p, const Rect &r);
 
 #pragma endregion
 

@@ -1,8 +1,8 @@
 #pragma once
 #include <atlas/core/vectors/vec3.h>
 
-namespace atlas::core::shape {
-    using namespace vec;
+namespace atlas::physics::shape {
+    using namespace core::vec;
 
     struct Sphere {
         Vec3 center;
