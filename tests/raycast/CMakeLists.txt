@@ -10,7 +10,7 @@ function(atlas_copy_runtime target_name)
     )
 endfunction()
 
-# shape_tests
+#raycast
 add_executable(raycast_tests
         raycast_test.cpp
         raycast_test.h
@@ -18,3 +18,12 @@ add_executable(raycast_tests
 
 target_link_libraries(raycast_tests PRIVATE atlas)
 atlas_copy_runtime(raycast_tests)
+
+#raycast2d
+add_executable(raycast2d_tests
+        raycast2d_test.cpp
+        raycast2d_test.h
+)
+
+target_link_libraries(raycast2d_tests PRIVATE atlas)
+atlas_copy_runtime(raycast2d_tests)
