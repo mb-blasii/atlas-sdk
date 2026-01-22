@@ -1,5 +1,10 @@
 #pragma once
 
+void testPointSphere();
+void testPointBox();
+void testPointOBB();
+void testPointCapsule();
+
 void testSphereSphere();
 
 void testSphereBox();

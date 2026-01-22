@@ -39,6 +39,18 @@ namespace atlas::physics::shape {
 
 #pragma region overlap
 
+    //Point-Sphere
+    bool overlap(const Vec3& point, const Sphere& s);
+
+    //Point-Box
+    bool overlap(const Vec3& point, const Box& b);
+
+    //Point-OBB
+    bool overlap(const Vec3& point, const OBB& o);
+
+    //Point-Capsule
+    bool overlap(const Vec3& point, const Capsule& c);
+
     // Sphere-Sphere
     bool overlap(const Sphere& a, const Sphere& b);
 

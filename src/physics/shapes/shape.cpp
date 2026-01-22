@@ -52,6 +52,38 @@ namespace atlas::physics::shape {
 
 #pragma region overlap
 
+    //Point-Sphere
+    bool overlap(const Vec3& point, const Sphere& s) {
+        Vec3 diff = point - s.center;
+        return diff.lengthSq() <= s.radius * s.radius;
+    }
+
+    //Point-Box
+    bool overlap(const Vec3& point, const Box& b) {
+        Vec3 minB = b.center - b.halfExtents;
+        Vec3 maxB = b.center + b.halfExtents;
+        return point.x >= minB.x && point.x <= maxB.x &&
+               point.y >= minB.y && point.y <= maxB.y &&
+               point.z >= minB.z && point.z <= maxB.z;
+    }
+
+    //Point-OBB
+    bool overlap(const Vec3& point, const OBB& o) {
+        Vec3 local = point - o.center;
+        for (int i = 0; i < 3; ++i) {
+            float dist = dot(local, o.axes[i]);
+            if (dist < -o.halfExtents[i] || dist > o.halfExtents[i])
+                return false;
+        }
+        return true;
+    }
+
+    //Point-Capsule
+    bool overlap(const Vec3& point, const Capsule& c) {
+        float dist = distancePointSegment(point, c.a, c.b);
+        return dist <= c.radius;
+    }
+
     // Sphere-Sphere
     bool overlap(const Sphere& a, const Sphere& b) {
         float r = a.radius + b.radius;

@@ -124,6 +124,6 @@ int main()
     testCapsuleRect();
     testCapsuleCapsule();
 
-    std::cout << "[shape2] All tests passed.\n";
+    std::cout << "[shapes2] All tests passed.\n";
     return 0;
 }
