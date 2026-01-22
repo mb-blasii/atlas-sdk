@@ -29,6 +29,15 @@ namespace atlas::physics::shape {
 
 #pragma region overlap
 
+    // Point-Circle
+    bool overlap(const core::vec::Vec2& point, const Circle& c);
+
+    // Point-Rect
+    bool overlap(const core::vec::Vec2& point, const Rect& r);
+
+    // Point-Capsule2D
+    bool overlap(const core::vec::Vec2& point, const Capsule2D& cap);
+
     // Rect-Rect
     bool overlap(const Rect &r1, const Rect &r2);
 

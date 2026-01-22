@@ -1,8 +1,8 @@
 #pragma once
 
-// -------------------------------------------------
-// SHAPE2 TESTS
-// -------------------------------------------------
+void testPointCircle();
+void testPointRect();
+void testPointCapsule();
 
 // Rect
 void testRectRect();

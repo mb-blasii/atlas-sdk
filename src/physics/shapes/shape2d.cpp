@@ -1,4 +1,4 @@
-#include <atlas/physics/shapes/shape2.h>
+#include <atlas/physics/shapes/shape2d.h>
 
 #include <cmath>
 #include <algorithm>
@@ -31,6 +31,26 @@ namespace atlas::physics::shape {
 #pragma endregion
 
 #pragma region overlap
+
+    // Point-Circle
+    bool overlap(const Vec2& point, const Circle& c) {
+        Vec2 diff = point - c.center;
+        return diff.lengthSq() <= c.radius * c.radius;
+    }
+
+    // Point-Rect
+    bool overlap(const Vec2& point, const Rect& r) {
+        Vec2 minR = r.center - r.halfExtents;
+        Vec2 maxR = r.center + r.halfExtents;
+        return point.x >= minR.x && point.x <= maxR.x &&
+               point.y >= minR.y && point.y <= maxR.y;
+    }
+
+    // Point-Capsule2D
+    bool overlap(const Vec2& point, const Capsule2D& cap) {
+        float distSq = distancePointSegmentSq(point, cap.a, cap.b);
+        return distSq <= cap.radius * cap.radius;
+    }
 
     // Rect-Rect
     bool overlap(const Rect &r1, const Rect &r2) {

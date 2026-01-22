@@ -20,10 +20,10 @@ target_link_libraries(shape_tests PRIVATE atlas)
 atlas_copy_runtime(shape_tests)
 
 # shape2_tests
-add_executable(shape2_tests
-        shape2_test.cpp
-        shape2_test.h
+add_executable(shape2d_tests
+        shape2d_test.cpp
+        shape2d_test.h
 )
 
-target_link_libraries(shape2_tests PRIVATE atlas)
-atlas_copy_runtime(shape2_tests)
+target_link_libraries(shape2d_tests PRIVATE atlas)
+atlas_copy_runtime(shape2d_tests)
