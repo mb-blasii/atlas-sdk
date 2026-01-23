@@ -104,12 +104,6 @@ namespace atlas::core::vec {
         return a + (b - a) * t;
     }
 
-    char* toString(const Vec2& v) {
-        static char buffer[40];
-        std::snprintf(buffer, sizeof(buffer), "(%.2f, %.2f)", v.x, v.y);
-        return buffer;
-    }
-
 #pragma endregion
 
 }

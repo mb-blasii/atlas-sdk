@@ -1,7 +1,6 @@
 #include <atlas/core/vectors/vec3.h>
 
 #include <cmath>
-#include <cstdio>
 #include <cassert>
 
 namespace atlas::core::vec {
@@ -51,12 +50,6 @@ namespace atlas::core::vec {
     float distanceSq(const Vec3& v1, const Vec3& v2) { return (v1 - v2).lengthSq(); }
 
     Vec3 lerp(const Vec3& a, const Vec3& b, float t) { return a + (b - a) * t; }
-
-    char* toString(const Vec3& v) {
-        static char buffer[60];
-        snprintf(buffer, sizeof(buffer), "(%.2f, %.2f, %.2f)", v.x, v.y, v.z);
-        return buffer;
-    }
 
 #pragma endregion
 

@@ -41,8 +41,6 @@ namespace atlas::core::vec {
 
     Vec2 lerp(const Vec2& a, const Vec2& b, float t);
 
-    char* toString(const Vec2& v);
-
 #pragma endregion
 
 }
