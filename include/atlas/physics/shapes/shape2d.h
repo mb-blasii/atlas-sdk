@@ -3,20 +3,33 @@
 
 namespace atlas::physics::shape {
 
-    struct Rect {
+    struct Shape2D {
+        void* ctx = nullptr; //context: might be used in future to bind a shape with an owning object
+    };
+
+    struct Rect : Shape2D{
         core::vec::Vec2 center;
         core::vec::Vec2 halfExtents;
+
+        Rect() : Shape2D(nullptr) {}
+        Rect(const core::vec::Vec2& c, const core::vec::Vec2& he) : Shape2D(nullptr), center(c), halfExtents(he) {}
     };
 
-    struct Circle {
+    struct Circle : Shape2D{
         core::vec::Vec2 center;
-        float radius;
+        float radius = 1.0f;
+
+        Circle() : Shape2D(nullptr) {}
+        Circle(const core::vec::Vec2& c, float r) : Shape2D(nullptr), center(c), radius(r) {}
     };
 
-    struct Capsule2D {
+    struct Capsule2D : Shape2D {
         core::vec::Vec2 a;
         core::vec::Vec2 b;
-        float radius;
+        float radius = 1.0f;
+
+        Capsule2D() : Shape2D(nullptr) {}
+        Capsule2D(const core::vec::Vec2& a, const core::vec::Vec2& b, float r) : Shape2D(nullptr), a(a), b(b), radius(r) {}
     };
 
 #pragma region utility functions

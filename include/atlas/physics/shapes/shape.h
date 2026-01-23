@@ -2,54 +2,75 @@
 #include <atlas/core/vectors/vec3.h>
 
 namespace atlas::physics::shape {
-    using namespace core::vec;
 
-    struct Sphere {
-        Vec3 center;
-        float radius;
+    struct Shape {
+        void* ctx = nullptr; //Might be used for adding a shape context in the future
     };
 
-    struct Box {
-        Vec3 center;
-        Vec3 halfExtents;
+    struct Sphere : Shape {
+        core::vec::Vec3 center;
+        float radius = 1.0f;
+
+        Sphere() : Shape(nullptr) {}
+        Sphere(const core::vec::Vec3& c, float r) : Shape(nullptr), center(c), radius(r) {}
     };
 
-    struct OBB {
-        Vec3 center;
-        Vec3 halfExtents;
-        Vec3 axes[3]; // Local orientation axes (normalized)
+    struct Box : Shape {
+        core::vec::Vec3 center;
+        core::vec::Vec3 halfExtents;
+
+        Box() : Shape(nullptr) {}
+        Box(const core::vec::Vec3& c, const core::vec::Vec3& he) : Shape(nullptr), center(c), halfExtents(he) {}
     };
 
-    struct Capsule {
-        Vec3 a;
-        Vec3 b;
-        float radius;
+    struct OBB : Shape {
+        core::vec::Vec3 center;
+        core::vec::Vec3 halfExtents;
+        core::vec::Vec3 axes[3]; // Local orientation axes (normalized)
+
+        OBB() : Shape(nullptr) {}
+        OBB(const core::vec::Vec3& c, const core::vec::Vec3& he, const core::vec::Vec3 a[3])
+        : Shape(nullptr), center(c), halfExtents(he)
+        {
+            axes[0] = a[0];
+            axes[1] = a[1];
+            axes[2] = a[2];
+        }
+    };
+
+    struct Capsule : Shape {
+        core::vec::Vec3 a;
+        core::vec::Vec3 b;
+        float radius = 1.0f;
+
+        Capsule() : Shape(nullptr) {}
+        Capsule(const core::vec::Vec3& a, const core::vec::Vec3& b, float r) : Shape(nullptr), a(a), b(b), radius(r) {}
     };
 
 #pragma region utility functions
 
-    float distancePointSegment(const Vec3& p, const Vec3& a, const Vec3& b);
+    float distancePointSegment(const core::vec::Vec3& p, const core::vec::Vec3& a, const core::vec::Vec3& b);
 
-    Vec3 clampPointBox(const Vec3& p, const Box& b);
+    core::vec::Vec3 clampPointBox(const core::vec::Vec3& p, const Box& b);
 
     // OBB-SAT UTILITY
-    bool overlapOnAxis(const OBB& a, const OBB& b, const Vec3& axis);
+    bool overlapOnAxis(const OBB& a, const OBB& b, const core::vec::Vec3& axis);
 
 #pragma endregion
 
 #pragma region overlap
 
     //Point-Sphere
-    bool overlap(const Vec3& point, const Sphere& s);
+    bool overlap(const core::vec::Vec3& point, const Sphere& s);
 
     //Point-Box
-    bool overlap(const Vec3& point, const Box& b);
+    bool overlap(const core::vec::Vec3& point, const Box& b);
 
     //Point-OBB
-    bool overlap(const Vec3& point, const OBB& o);
+    bool overlap(const core::vec::Vec3& point, const OBB& o);
 
     //Point-Capsule
-    bool overlap(const Vec3& point, const Capsule& c);
+    bool overlap(const core::vec::Vec3& point, const Capsule& c);
 
     // Sphere-Sphere
     bool overlap(const Sphere& a, const Sphere& b);

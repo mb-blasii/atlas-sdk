@@ -4,6 +4,7 @@
 #include <atlas/physics/shapes/shape.h>
 
 using namespace atlas::physics::shape;
+using namespace atlas::core::vec;
 
 // -----------------------------
 // Point-Sphere
@@ -166,7 +167,13 @@ void testCapsuleCapsule() {
 // -----------------------------
 void testOBB() {
     // Basic OBB-AABB overlap test using axes-aligned OBB
-    OBB obb1{{0, 0, 0}, {1, 1, 1}, {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}}};
+    Vec3 axes[3] = {
+        {1, 0, 0},
+        {0, 1, 0},
+        {0, 0, 1}
+    };
+
+    OBB obb1{{0, 0, 0}, {1, 1, 1}, axes};
     Box b{{1.5f, 0, 0}, {0.5f, 0.5f, 0.5f}};
     Box b2{{3.0f, 0, 0}, {0.5f, 0.5f, 0.5f}};
 
