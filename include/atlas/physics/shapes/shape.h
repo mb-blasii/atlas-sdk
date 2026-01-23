@@ -3,6 +3,8 @@
 
 namespace atlas::physics::shape {
 
+#pragma region shapes
+
     struct Shape {
         void* ctx = nullptr; //Might be used for adding a shape context in the future
     };
@@ -46,6 +48,8 @@ namespace atlas::physics::shape {
         Capsule() : Shape(nullptr) {}
         Capsule(const core::vec::Vec3& a, const core::vec::Vec3& b, float r) : Shape(nullptr), a(a), b(b), radius(r) {}
     };
+
+#pragma endregion
 
 #pragma region utility functions
 
@@ -108,6 +112,15 @@ namespace atlas::physics::shape {
     // Capsule-OBB
     bool overlap(const Capsule& c, const OBB& o);
     bool overlap(const OBB& o, const Capsule& c);
+
+#pragma endregion
+
+#pragma region compute AABB
+
+    Box computeAABB(const Sphere& s, float scaleFactor = 1.0f);
+    Box computeAABB(const Box& b, float scaleFactor = 1.0f);
+    Box computeAABB(const OBB& o, float scaleFactor = 1.0f);
+    Box computeAABB(const Capsule& c, float scaleFactor = 1.0f);
 
 #pragma endregion
 

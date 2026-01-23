@@ -236,4 +236,71 @@ namespace atlas::physics::shape {
 
 #pragma endregion
 
+#pragma region compute AABB
+
+    // Sphere
+    Box computeAABB(const Sphere& s, float scaleFactor) {
+        Vec3 he(s.radius, s.radius, s.radius);
+        he *= scaleFactor;
+
+        return Box{s.center, he};
+    }
+
+    // Box
+    Box computeAABB(const Box& b, float scaleFactor) {
+        return Box{
+            b.center,
+            b.halfExtents * scaleFactor
+        };
+    }
+
+    // OBB
+    Box computeAABB(const OBB& o, float scaleFactor) {
+        // Project OBB half extents onto world axes
+        Vec3 he;
+        he.x = std::abs(o.axes[0].x) * o.halfExtents.x +
+               std::abs(o.axes[1].x) * o.halfExtents.y +
+               std::abs(o.axes[2].x) * o.halfExtents.z;
+
+        he.y = std::abs(o.axes[0].y) * o.halfExtents.x +
+               std::abs(o.axes[1].y) * o.halfExtents.y +
+               std::abs(o.axes[2].y) * o.halfExtents.z;
+
+        he.z = std::abs(o.axes[0].z) * o.halfExtents.x +
+               std::abs(o.axes[1].z) * o.halfExtents.y +
+               std::abs(o.axes[2].z) * o.halfExtents.z;
+
+        he *= scaleFactor;
+
+        return Box{o.center, he};
+    }
+
+    // Capsule
+    Box computeAABB(const Capsule& c, float scaleFactor) {
+        Vec3 minP{
+            std::min(c.a.x, c.b.x),
+            std::min(c.a.y, c.b.y),
+            std::min(c.a.z, c.b.z)
+        };
+
+        Vec3 maxP{
+            std::max(c.a.x, c.b.x),
+            std::max(c.a.y, c.b.y),
+            std::max(c.a.z, c.b.z)
+        };
+
+        Vec3 r(c.radius, c.radius, c.radius);
+
+        minP -= r;
+        maxP += r;
+
+        Vec3 center = (minP + maxP) * 0.5f;
+        Vec3 halfExtents = (maxP - minP) * 0.5f;
+        halfExtents *= scaleFactor;
+
+        return Box{center, halfExtents};
+    }
+
+#pragma endregion
+
 }
