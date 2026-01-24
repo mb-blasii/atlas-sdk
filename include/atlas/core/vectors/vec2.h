@@ -21,6 +21,9 @@ namespace atlas::core::vec {
         Vec2& operator*=(float s);
         Vec2& operator/=(float scalar);
 
+        bool operator==(const Vec2& rhs) const;
+        bool operator!=(const Vec2& rhs) const;
+
         float& operator[](int i);
         const float& operator[](int i) const;
 

@@ -1,24 +1,26 @@
 #include <atlas/core/vectors/vec2.h>
+#include <atlas/core/math/math.h>
 
 #include <cmath>
 #include <cassert>
-#include <cstdio>
+
 
 namespace atlas::core::vec {
-
     // Constructors
-    Vec2::Vec2() : x(0.0f), y(0.0f) {}
+    Vec2::Vec2() : x(0.0f), y(0.0f) {
+    }
 
-    Vec2::Vec2(float _x, float _y) : x(_x), y(_y) {}
+    Vec2::Vec2(float _x, float _y) : x(_x), y(_y) {
+    }
 
-    Vec2::Vec2(const Vec2& other) = default;
+    Vec2::Vec2(const Vec2 &other) = default;
 
     // Operators
-    Vec2 Vec2::operator+(const Vec2& rhs) const {
+    Vec2 Vec2::operator+(const Vec2 &rhs) const {
         return Vec2(x + rhs.x, y + rhs.y);
     }
 
-    Vec2 Vec2::operator-(const Vec2& rhs) const {
+    Vec2 Vec2::operator-(const Vec2 &rhs) const {
         return Vec2(x - rhs.x, y - rhs.y);
     }
 
@@ -30,36 +32,44 @@ namespace atlas::core::vec {
         return Vec2(x / s, y / s);
     }
 
-    Vec2& Vec2::operator+=(const Vec2& rhs) {
+    Vec2 &Vec2::operator+=(const Vec2 &rhs) {
         x += rhs.x;
         y += rhs.y;
         return *this;
     }
 
-    Vec2& Vec2::operator-=(const Vec2& rhs) {
+    Vec2 &Vec2::operator-=(const Vec2 &rhs) {
         x -= rhs.x;
         y -= rhs.y;
         return *this;
     }
 
-    Vec2& Vec2::operator*=(float s) {
+    Vec2 &Vec2::operator*=(float s) {
         x *= s;
         y *= s;
         return *this;
     }
 
-    Vec2& Vec2::operator/=(float scalar) {
+    Vec2 &Vec2::operator/=(float scalar) {
         x /= scalar;
         y /= scalar;
         return *this;
     }
 
-    float& Vec2::operator[](int i) {
+    bool Vec2::operator==(const Vec2 &rhs) const {
+        return
+                math::nearlyEqual(x, rhs.x) &&
+                math::nearlyEqual(y, rhs.y);
+    }
+
+    bool Vec2::operator!=(const Vec2 &rhs) const { return !(*this == rhs); }
+
+    float &Vec2::operator[](int i) {
         assert(i >= 0 && i < 2);
         return i == 0 ? x : y;
     }
 
-    const float& Vec2::operator[](int i) const {
+    const float &Vec2::operator[](int i) const {
         assert(i >= 0 && i < 2);
         return i == 0 ? x : y;
     }
@@ -88,22 +98,21 @@ namespace atlas::core::vec {
 
 #pragma region functions
 
-    float dot(const Vec2& v1, const Vec2& v2) {
+    float dot(const Vec2 &v1, const Vec2 &v2) {
         return v1.x * v2.x + v1.y * v2.y;
     }
 
-    float distance(const Vec2& v1, const Vec2& v2) {
+    float distance(const Vec2 &v1, const Vec2 &v2) {
         return (v1 - v2).length();
     }
 
-    float distanceSq(const Vec2& v1, const Vec2& v2) {
+    float distanceSq(const Vec2 &v1, const Vec2 &v2) {
         return (v1 - v2).lengthSq();
     }
 
-    Vec2 lerp(const Vec2& a, const Vec2& b, float t) {
+    Vec2 lerp(const Vec2 &a, const Vec2 &b, float t) {
         return a + (b - a) * t;
     }
 
 #pragma endregion
-
 }

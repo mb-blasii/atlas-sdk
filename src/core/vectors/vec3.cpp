@@ -1,4 +1,5 @@
 #include <atlas/core/vectors/vec3.h>
+#include <atlas/core/math/math.h>
 
 #include <cmath>
 #include <cassert>
@@ -20,6 +21,15 @@ namespace atlas::core::vec {
     Vec3& Vec3::operator-=(const Vec3& rhs) { x -= rhs.x; y -= rhs.y; z -= rhs.z; return *this; }
     Vec3& Vec3::operator*=(float scalar) { x *= scalar; y *= scalar; z *= scalar; return *this; }
     Vec3& Vec3::operator/=(float scalar) { x /= scalar; y /= scalar; z /= scalar; return *this; }
+
+    bool Vec3::operator==(const Vec3 &rhs) const {
+        return
+                math::nearlyEqual(x, rhs.x) &&
+                math::nearlyEqual(y, rhs.y) &&
+                math::nearlyEqual(z, rhs.z);
+    }
+
+    bool Vec3::operator!=(const Vec3 &rhs) const { return !(*this == rhs); }
 
     float& Vec3::operator[](int i) {
         assert(i>=0 && i<3);

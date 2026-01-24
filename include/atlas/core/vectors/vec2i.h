@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <functional>
 
 #include "vec2.h"
 
@@ -50,3 +51,12 @@ namespace atlas::core::vec {
 #pragma endregion
 
 }
+
+template<>
+struct std::hash<atlas::core::vec::Vec2i> {
+    size_t operator()(const atlas::core::vec::Vec2i& v) const noexcept {
+        size_t h1 = std::hash<int>{}(v.x);
+        size_t h2 = std::hash<int>{}(v.y);
+        return h1 ^ (h2 << 1);
+    }
+};
