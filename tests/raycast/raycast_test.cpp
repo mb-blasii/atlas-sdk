@@ -56,7 +56,7 @@ void testRaycastSphere() {
 
 // Box (AABB)
 void testRaycastBox() {
-    Box b{ Vec3{0, 0, 0}, Vec3{1, 1, 1} };
+    AABB b{ Vec3{0, 0, 0}, Vec3{1, 1, 1} };
     RayResult r;
 
     // 1. No collision
@@ -92,7 +92,7 @@ void testRaycastBox() {
 
 // OBB
 void testRaycastOBB() {
-    OBB o;
+    Box o;
     o.center = Vec3{0, 0, 0};
     o.halfExtents = Vec3{1, 1, 1};
     o.axes[0] = Vec3{1, 0, 0};

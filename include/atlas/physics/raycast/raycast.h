@@ -19,8 +19,8 @@ namespace atlas::physics::ray {
 
     // Raycast (single hit, closest)
     bool raycast(const Ray& ray, const shape::Sphere& s, RayResult& out);
-    bool raycast(const Ray& ray, const shape::Box& b, RayResult& out);
-    bool raycast(const Ray& ray, const shape::OBB& o, RayResult& out);
+    bool raycast(const Ray& ray, const shape::AABB& b, RayResult& out);
+    bool raycast(const Ray& ray, const shape::Box& o, RayResult& out);
     bool raycast(const Ray& ray, const shape::Capsule& c, RayResult& out);
 
 }

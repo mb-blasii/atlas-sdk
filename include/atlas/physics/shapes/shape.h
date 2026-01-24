@@ -5,8 +5,19 @@ namespace atlas::physics::shape {
 
 #pragma region shapes
 
+    struct AABB {
+        core::vec::Vec3 center;
+        core::vec::Vec3 halfExtents;
+    };
+
     struct Shape {
         void* ctx = nullptr; //Might be used for adding a shape context in the future
+
+        Shape() = default;
+        explicit Shape(void* ctx) : ctx(ctx) {}
+        virtual ~Shape() = default;
+
+        virtual AABB computeAABB(float scaleFactor = 1.0f) const;
     };
 
     struct Sphere : Shape {
@@ -15,29 +26,26 @@ namespace atlas::physics::shape {
 
         Sphere() : Shape(nullptr) {}
         Sphere(const core::vec::Vec3& c, float r) : Shape(nullptr), center(c), radius(r) {}
+
+        AABB computeAABB(float scaleFactor = 1.0f) const override;
     };
+
 
     struct Box : Shape {
         core::vec::Vec3 center;
         core::vec::Vec3 halfExtents;
-
-        Box() : Shape(nullptr) {}
-        Box(const core::vec::Vec3& c, const core::vec::Vec3& he) : Shape(nullptr), center(c), halfExtents(he) {}
-    };
-
-    struct OBB : Shape {
-        core::vec::Vec3 center;
-        core::vec::Vec3 halfExtents;
         core::vec::Vec3 axes[3]; // Local orientation axes (normalized)
 
-        OBB() : Shape(nullptr) {}
-        OBB(const core::vec::Vec3& c, const core::vec::Vec3& he, const core::vec::Vec3 a[3])
+        Box() : Shape(nullptr) {}
+        Box(const core::vec::Vec3& c, const core::vec::Vec3& he, const core::vec::Vec3 a[3])
         : Shape(nullptr), center(c), halfExtents(he)
         {
             axes[0] = a[0];
             axes[1] = a[1];
             axes[2] = a[2];
         }
+
+        AABB computeAABB(float scaleFactor = 1.0f) const override;
     };
 
     struct Capsule : Shape {
@@ -47,6 +55,8 @@ namespace atlas::physics::shape {
 
         Capsule() : Shape(nullptr) {}
         Capsule(const core::vec::Vec3& a, const core::vec::Vec3& b, float r) : Shape(nullptr), a(a), b(b), radius(r) {}
+
+        AABB computeAABB(float scaleFactor = 1.0f) const override;
     };
 
 #pragma endregion
@@ -55,10 +65,10 @@ namespace atlas::physics::shape {
 
     float distancePointSegment(const core::vec::Vec3& p, const core::vec::Vec3& a, const core::vec::Vec3& b);
 
-    core::vec::Vec3 clampPointBox(const core::vec::Vec3& p, const Box& b);
+    core::vec::Vec3 clampPointAABB(const core::vec::Vec3& p, const AABB& b);
 
     // OBB-SAT UTILITY
-    bool overlapOnAxis(const OBB& a, const OBB& b, const core::vec::Vec3& axis);
+    bool overlapOnAxis(const Box& a, const Box& b, const core::vec::Vec3& axis);
 
 #pragma endregion
 
@@ -67,11 +77,11 @@ namespace atlas::physics::shape {
     //Point-Sphere
     bool overlap(const core::vec::Vec3& point, const Sphere& s);
 
-    //Point-Box
-    bool overlap(const core::vec::Vec3& point, const Box& b);
+    //Point-AABB
+    bool overlap(const core::vec::Vec3& point, const AABB& b);
 
-    //Point-OBB
-    bool overlap(const core::vec::Vec3& point, const OBB& o);
+    //Point-Box
+    bool overlap(const core::vec::Vec3& point, const Box& o);
 
     //Point-Capsule
     bool overlap(const core::vec::Vec3& point, const Capsule& c);
@@ -79,48 +89,46 @@ namespace atlas::physics::shape {
     // Sphere-Sphere
     bool overlap(const Sphere& a, const Sphere& b);
 
-    // Box-Box (AABB)
-    bool overlap(const Box& a, const Box& b);
+    // AABB
+    bool overlap(const AABB& a, const AABB& b);
 
     // Capsule-Capsule
     bool overlap(const Capsule& a, const Capsule& b);
 
-    // OBB-OBB using SAT
-    bool overlap(const OBB& a, const OBB& b);
+    // Box-Box using SAT
+    bool overlap(const Box& a, const Box& b);
 
-    // Sphere-Box (AABB)
-    bool overlap(const Sphere& s, const Box& b);
-    bool overlap(const Box& b, const Sphere& s);
-
+    // Sphere-AABB
+    bool overlap(const Sphere& s, const AABB& b);
+    bool overlap(const AABB& b, const Sphere& s);
 
     // Capsule-Sphere
     bool overlap(const Capsule& c, const Sphere& s);
     bool overlap(const Sphere& s, const Capsule& c);
 
-    // Capsule-Box (AABB)
-    bool overlap(const Capsule& c, const Box& b);
-    bool overlap(const Box& b, const Capsule& c);
+    // Capsule-AABB
+    bool overlap(const Capsule& c, const AABB& b);
+    bool overlap(const AABB& b, const Capsule& c);
 
-    // Sphere-OBB
-    bool overlap(const Sphere& s, const OBB& o);
-    bool overlap(const OBB& o, const Sphere& s);
+    // Sphere-Box
+    bool overlap(const Sphere& s, const Box& o);
+    bool overlap(const Box& o, const Sphere& s);
 
-    // Box(AABB)-OBB
-    bool overlap(const Box& b, const OBB& o);
-    bool overlap(const OBB& o, const Box& b);
+    // AABB-Box
+    bool overlap(const AABB& b, const Box& o);
+    bool overlap(const Box& o, const AABB& b);
 
-    // Capsule-OBB
-    bool overlap(const Capsule& c, const OBB& o);
-    bool overlap(const OBB& o, const Capsule& c);
+    // Capsule-Box
+    bool overlap(const Capsule& c, const Box& o);
+    bool overlap(const Box& o, const Capsule& c);
 
 #pragma endregion
 
 #pragma region compute AABB
 
-    Box computeAABB(const Sphere& s, float scaleFactor = 1.0f);
-    Box computeAABB(const Box& b, float scaleFactor = 1.0f);
-    Box computeAABB(const OBB& o, float scaleFactor = 1.0f);
-    Box computeAABB(const Capsule& c, float scaleFactor = 1.0f);
+    AABB sphereAABB(const Sphere& s, float scaleFactor = 1.0f);
+    AABB boxAABB(const Box& o, float scaleFactor = 1.0f);
+    AABB capsuleAABB(const Capsule& c, float scaleFactor = 1.0f);
 
 #pragma endregion
 

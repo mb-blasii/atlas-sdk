@@ -36,7 +36,7 @@ namespace atlas::physics::ray {
     }
 
     // Ray vs AABB (slab method)
-    bool raycast(const Ray &ray, const shape::Box &b, RayResult &out) {
+    bool raycast(const Ray &ray, const shape::AABB &b, RayResult &out) {
         Vec3 dir = ray.direction.normalized();
 
         Vec3 min = b.center - b.halfExtents;
@@ -79,7 +79,7 @@ namespace atlas::physics::ray {
     }
 
     // Ray vs OBB (ray transformed to local space)
-    bool raycast(const Ray &ray, const shape::OBB &o, RayResult &out) {
+    bool raycast(const Ray &ray, const shape::Box &o, RayResult &out) {
         Vec3 dir = ray.direction.normalized();
 
         Vec3 p = ray.origin - o.center;
@@ -95,7 +95,7 @@ namespace atlas::physics::ray {
             dot(dir, o.axes[2])
         };
 
-        shape::Box localBox;
+        shape::AABB localBox;
         localBox.center = Vec3{0.0f, 0.0f, 0.0f};
         localBox.halfExtents = o.halfExtents;
 

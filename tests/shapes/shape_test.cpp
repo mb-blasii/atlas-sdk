@@ -3,8 +3,11 @@
 #include <cassert>
 #include <atlas/physics/shapes/shape.h>
 
+#include <atlas/core/math/math.h>
+
 using namespace atlas::physics::shape;
 using namespace atlas::core::vec;
+using namespace atlas::core::math;
 
 // -----------------------------
 // Point-Sphere
@@ -26,10 +29,10 @@ void testPointSphere() {
 }
 
 // -----------------------------
-// Point-Box
+// Point-AABB
 // -----------------------------
-void testPointBox() {
-    Box b{Vec3{0, 0, 0}, Vec3{1, 1, 1}};
+void testPointAABB() {
+    AABB b{Vec3{0, 0, 0}, Vec3{1, 1, 1}};
 
     // 1. Outside
     assert(!overlap(Vec3{2,0,0}, b) && "Point should not be inside box");
@@ -47,8 +50,8 @@ void testPointBox() {
 // -----------------------------
 // Point-OBB
 // -----------------------------
-void testPointOBB() {
-    OBB o;
+void testPointBox() {
+    Box o;
     o.center = Vec3{0, 0, 0};
     o.halfExtents = Vec3{1, 1, 1};
     o.axes[0] = Vec3{1, 0, 0};
@@ -103,27 +106,27 @@ void testSphereSphere() {
 }
 
 // -----------------------------
-// Sphere-Box (AABB)
+// Sphere-AABB
 // -----------------------------
-void testSphereBox() {
+void testSphereAABB() {
     Sphere s{{0, 0, 0}, 1.0f};
-    Box b{{1.5f, 0, 0}, {0.5f, 0.5f, 0.5f}};
-    Box b2{{3.0f, 0, 0}, {0.5f, 0.5f, 0.5f}};
+    AABB b{{1.5f, 0, 0}, {0.5f, 0.5f, 0.5f}};
+    AABB b2{{3.0f, 0, 0}, {0.5f, 0.5f, 0.5f}};
 
-    assert(overlap(s, b) && "Sphere-Box should overlap");
-    assert(!overlap(s, b2) && "Sphere-Box should NOT overlap");
+    assert(overlap(s, b) && "Sphere-AABB should overlap");
+    assert(!overlap(s, b2) && "Sphere-AABB should NOT overlap");
 }
 
 // -----------------------------
-// Box-Box (AABB)
+// AABB
 // -----------------------------
-void testBoxBox() {
-    Box b1{{0, 0, 0}, {1, 1, 1}};
-    Box b2{{1.5f, 0, 0}, {1, 1, 1}};
-    Box b3{{3.0f, 0, 0}, {1, 1, 1}};
+void testAABB() {
+    AABB b1{{0, 0, 0}, {1, 1, 1}};
+    AABB b2{{1.5f, 0, 0}, {1, 1, 1}};
+    AABB b3{{3.0f, 0, 0}, {1, 1, 1}};
 
-    assert(overlap(b1, b2) && "Box-Box should overlap");
-    assert(!overlap(b1, b3) && "Box-Box should NOT overlap");
+    assert(overlap(b1, b2) && "AABB-AABB should overlap");
+    assert(!overlap(b1, b3) && "AABB-AABB should NOT overlap");
 }
 
 // -----------------------------
@@ -139,15 +142,15 @@ void testCapsuleSphere() {
 }
 
 // -----------------------------
-// Capsule-Box
+// Capsule-AABB
 // -----------------------------
-void testCapsuleBox() {
+void testCapsuleAABB() {
     Capsule cap{{-1, 0, 0}, {1, 0, 0}, 0.5f};
-    Box b1{{0, 0, 0}, {0.5f, 0.5f, 0.5f}};
-    Box b2{{0, 2, 0}, {0.5f, 0.5f, 0.5f}};
+    AABB b1{{0, 0, 0}, {0.5f, 0.5f, 0.5f}};
+    AABB b2{{0, 2, 0}, {0.5f, 0.5f, 0.5f}};
 
-    assert(overlap(cap, b1) && "Capsule-Box should overlap");
-    assert(!overlap(cap, b2) && "Capsule-Box should NOT overlap");
+    assert(overlap(cap, b1) && "Capsule-AABB should overlap");
+    assert(!overlap(cap, b2) && "Capsule-AABB should NOT overlap");
 }
 
 // -----------------------------
@@ -165,7 +168,7 @@ void testCapsuleCapsule() {
 // -----------------------------
 // OBB tests (minimal)
 // -----------------------------
-void testOBB() {
+void testBox() {
     // Basic OBB-AABB overlap test using axes-aligned OBB
     Vec3 axes[3] = {
         {1, 0, 0},
@@ -173,28 +176,99 @@ void testOBB() {
         {0, 0, 1}
     };
 
-    OBB obb1{{0, 0, 0}, {1, 1, 1}, axes};
-    Box b{{1.5f, 0, 0}, {0.5f, 0.5f, 0.5f}};
-    Box b2{{3.0f, 0, 0}, {0.5f, 0.5f, 0.5f}};
+    Box obb1{{0, 0, 0}, {1, 1, 1}, axes};
+    AABB b{{1.5f, 0, 0}, {0.5f, 0.5f, 0.5f}};
+    AABB b2{{3.0f, 0, 0}, {0.5f, 0.5f, 0.5f}};
 
     // Using AABB approximation for now
     assert(overlap(b, obb1) && "Box-OBB should overlap");
     assert(!overlap(b2, obb1) && "Box-OBB should NOT overlap");
 }
 
+//Test compute AABBs
+
+void assertVec3Equal(const Vec3& a, const Vec3& b, const char* msg = "") {
+    assert(nearlyEqual(a.x, b.x) && msg);
+    assert(nearlyEqual(a.y, b.y) && msg);
+    assert(nearlyEqual(a.z, b.z) && msg);
+}
+
+void assertAABBEqual(const AABB& a, const AABB& b, const char* msg = "") {
+    assertVec3Equal(a.center, b.center, msg);
+    assertVec3Equal(a.halfExtents, b.halfExtents, msg);
+}
+
+void testComputeAABB_sphere() {
+    Sphere s({0.f, 0.f, 0.f}, 1.f);
+
+    AABB aabb = s.computeAABB();
+
+    AABB expected(
+        {0.f, 0.f, 0.f},
+        {1.f, 1.f, 1.f}
+    );
+
+    assertAABBEqual(aabb, expected);
+}
+
+void testComputeAABB_box() {
+    Vec3 axes[3] = {
+        {1.f, 0.f, 0.f},
+        {0.f, 1.f, 0.f},
+        {0.f, 0.f, 1.f}
+    };
+
+    Box obb(
+        {0.f, 0.f, 0.f},
+        {1.f, 2.f, 3.f},
+        axes
+    );
+
+    AABB aabb = obb.computeAABB();
+
+    AABB expected(
+        {0.f, 0.f, 0.f},
+        {1.f, 2.f, 3.f}
+    );
+
+    assertAABBEqual(aabb, expected);
+}
+
+void testComputeAABB_capsule() {
+    Capsule c(
+        {0.f, 0.f, 0.f},
+        {0.f, 2.f, 0.f},
+        0.5f
+    );
+
+    AABB aabb = c.computeAABB();
+
+    AABB expected(
+        {0.f, 1.f, 0.f},
+        {0.5f, 1.5f, 0.5f}
+    );
+
+    assertAABBEqual(aabb, expected);
+}
+
 int main() {
 
     testPointSphere();
+    testPointAABB();
     testPointBox();
-    testPointOBB();
     testPointCapsule();
     testSphereSphere();
-    testSphereBox();
-    testBoxBox();
+    testSphereAABB();
+    testAABB();
     testCapsuleSphere();
-    testCapsuleBox();
+    testCapsuleAABB();
     testCapsuleCapsule();
-    testOBB();
+    testBox();
+
+    //Test AABBs
+    testComputeAABB_sphere();
+    testComputeAABB_box();
+    testComputeAABB_capsule();
 
     std::cout << "[shapes] All tests passed.\n";
     return 0;

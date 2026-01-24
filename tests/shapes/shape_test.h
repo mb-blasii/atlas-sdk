@@ -1,20 +1,24 @@
 #pragma once
 
 void testPointSphere();
+void testPointAABB();
 void testPointBox();
-void testPointOBB();
 void testPointCapsule();
 
 void testSphereSphere();
 
-void testSphereBox();
+void testSphereAABB();
 
-void testBoxBox();
+void testAABB();
 
 void testCapsuleSphere();
 
-void testCapsuleBox();
+void testCapsuleAABB();
 
 void testCapsuleCapsule();
 
-void testOBB(); // minimal tests for OBBs
+void testComputeAABB_sphere();
+void testComputeAABB_box();
+void testComputeAABB_capsule();
+
+void testBox(); // minimal tests for OBBs
