@@ -26,6 +26,7 @@
 *.sln.docstates
 
 # CMake files
+cmake-build-debug/
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
