@@ -166,6 +166,101 @@ void testCapsuleCapsule()
     assert(!overlap(a, c) && "Capsule-Capsule should NOT overlap");
 }
 
+void testBoxRect()
+{
+    //Square with l=1 rotated 45 degrees on the origin
+    //Rect is testing one of the corners that would be occupied by the Box's Rect
+
+    Box2D box;
+    box.center = Vec2{ 0.0f, 0.0f };
+    box.halfExtents = Vec2{ 1.0f, 1.0f };
+
+    const float invSqrt2 = 0.7071067811865475f;
+    box.axes[0] = Vec2{  invSqrt2,  invSqrt2 };
+    box.axes[1] = Vec2{ -invSqrt2,  invSqrt2 };
+
+    Rect rect;
+    rect.center = Vec2{ 1.35f, 0.30f };
+    rect.halfExtents = Vec2{ 0.1f, 0.1f };
+
+    assert(!overlap(rect, box) && "Rect is inside Box AABB but outside real Box");
+
+    Rect boxRect = box.computeRect();
+    assert(overlap(boxRect, rect) && "Rect must overlap Box bounding Rect");
+
+    Rect rect2;
+    rect2.center = Vec2{ 1.35f, 0.30f };
+    rect2.halfExtents = Vec2{ 0.5f, 0.1f };
+    assert(overlap(rect2, box) && "Rect extents should overlap with the Box");
+}
+
+void testBoxBox()
+{
+    const float invSqrt2 = 0.7071067811865475f;
+
+    // Box A (45°)
+    Box2D boxA;
+    boxA.center = Vec2{ 0.0f, 0.0f };
+    boxA.halfExtents = Vec2{ 1.0f, 0.5f };
+    boxA.axes[0] = Vec2{  invSqrt2,  invSqrt2 };
+    boxA.axes[1] = Vec2{ -invSqrt2,  invSqrt2 };
+
+    // Box B (-30°)
+    Box2D boxB;
+    boxB.halfExtents = Vec2{ 0.6f, 0.4f };
+
+    const float cos30 = 0.8660254037844386f;
+    const float sin30 = 0.5f;
+
+    boxB.axes[0] = Vec2{  cos30, -sin30 };
+    boxB.axes[1] = Vec2{  sin30,  cos30 };
+
+    // Distance chosen so that:
+    // - projection on all SAT axes is strictly separated
+    // - no center lies inside the other box
+    boxB.center = Vec2{ 2.6f, 0.0f };
+
+    assert(!overlap(boxA, boxB) &&
+           "Box2D should NOT overlap (different rotations, clear separation)");
+
+    // Move boxB closer along X
+    boxB.center = Vec2{ 1.54935f, 0.0f };
+
+    assert(overlap(boxA, boxB) &&
+           "Box2D should overlap after reducing separation");
+}
+
+void testBoxCapsule()
+{
+    const float invSqrt2 = 0.7071067811865475f;
+
+    // Box rotated 45°
+    Box2D box;
+    box.center = Vec2{ 0.0f, 0.0f };
+    box.halfExtents = Vec2{ 1.0f, 1.0f };
+    box.axes[0] = Vec2{  invSqrt2,  invSqrt2 };
+    box.axes[1] = Vec2{ -invSqrt2,  invSqrt2 };
+
+    Capsule2D capsule;
+    capsule.radius = 0.15f;
+
+    // Capsule completely outside (NO overlap)
+    // Degenerate capsule (point + radius)
+    // Distance from OBB corner is strictly > radius
+    capsule.a = Vec2{ 1.80f, 0.0f };
+    capsule.b = capsule.a;
+
+    assert(!overlap(box, capsule) &&
+           "Capsule should NOT overlap Box2D");
+
+    // Capsule overlapping
+    capsule.a = Vec2{ 1.5f, 0.0f }; //Overlap on very edge point
+    capsule.b = capsule.a;
+
+    assert(overlap(box, capsule) &&
+           "Capsule should overlap Box2D");
+}
+
 int main()
 {
     testPointCircle();
@@ -177,6 +272,10 @@ int main()
     testCapsuleCircle();
     testCapsuleRect();
     testCapsuleCapsule();
+
+    testBoxRect();
+    testBoxBox();
+    testBoxCapsule();
 
     std::cout << "[shapes2] All tests passed.\n";
     return 0;
