@@ -18,3 +18,12 @@ add_executable(broadphase_tests
 
 target_link_libraries(broadphase_tests PRIVATE atlas)
 atlas_copy_runtime(broadphase_tests)
+
+# broadphase2d_tests
+add_executable(broadphase2d_tests
+        broadphase2d_test.cpp
+        broadphase2d_test.h
+)
+
+target_link_libraries(broadphase2d_tests PRIVATE atlas)
+atlas_copy_runtime(broadphase2d_tests)
