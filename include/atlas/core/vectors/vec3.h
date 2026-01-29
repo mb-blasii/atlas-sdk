@@ -15,6 +15,8 @@ namespace atlas::core::vec {
         Vec3 operator-(const Vec3& rhs) const;
         Vec3 operator*(float scalar) const;
         Vec3 operator/(float scalar) const;
+        Vec3 operator*(const Vec3& rhs) const;
+        Vec3 operator-() const;
 
         Vec3& operator+=(const Vec3& rhs);
         Vec3& operator-=(const Vec3& rhs);
