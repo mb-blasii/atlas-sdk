@@ -40,7 +40,7 @@ namespace atlas::core::mat4 {
     Mat4 TRS(const vec::Vec3 &t, const vec::Vec3 &r, const vec::Vec3 &s);
 
     Mat4 inverseTRS(const Mat4& m);
-    Mat4 inverseTRS(const vec::Vec3& t, const quat::Quat& r, vec::Vec3& s);
+    Mat4 inverseTRS(const vec::Vec3& t, const quat::Quat& r, const vec::Vec3& s);
 
     vec::Vec3 getTranslation(const Mat4 &trs);
     quat::Quat getRotation(const Mat4 &trs);

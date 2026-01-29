@@ -4,7 +4,10 @@
 namespace atlas::core::mat4 {
 
     // Constructors
-    Mat4::Mat4() { *this = identity(); }
+    Mat4::Mat4() {
+        for (float &i: m) i = 0.0f;
+        m[0] = m[5] = m[10] = m[15] = 1.0f;
+    }
 
     Mat4::Mat4(const float diag) {
         for (float &i: m) i = 0.0f;
@@ -113,6 +116,14 @@ namespace atlas::core::mat4 {
     Mat4 TRS(const vec::Vec3 &t, const vec::Vec3 &r, const vec::Vec3 &s) {
         quat::Quat q = quat::fromEuler(r);
         return TRS(t, q, s);
+    }
+
+    Mat4 inverseTRS(const Mat4 &m) {
+        auto t = getTranslation(m);
+        auto r = getRotation(m);
+        auto s = getScale(m);
+
+        return inverseTRS(t, r, s);
     }
 
     Mat4 inverseTRS(const vec::Vec3& t, const quat::Quat& r, const vec::Vec3& s)
