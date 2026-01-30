@@ -21,10 +21,11 @@ namespace atlas::core::transform {
         // setters
 
         void setLocalPosition(const vec::Vec3 &position);
-
         void setLocalRotation(const quat::Quat &rotation);
-
         void setLocalScale(const vec::Vec3 &scale);
+
+        void setWorldPosition(const vec::Vec3 &position);
+        void setWorldRotation(const quat::Quat &rotation);
 
         // getters
 

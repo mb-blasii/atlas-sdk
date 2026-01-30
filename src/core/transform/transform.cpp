@@ -44,6 +44,20 @@ namespace atlas::core::transform {
         markDirty();
     }
 
+    void Transform::setWorldPosition(const vec::Vec3 &position) {
+        if (m_parent)
+            setLocalPosition(mat4::transformPoint(mat4::inverseTRS(m_parent->getWorldMatrix()), position));
+        else
+            setLocalPosition(position);
+    }
+
+    void Transform::setWorldRotation(const quat::Quat &rotation) {
+        if (m_parent)
+            setLocalRotation((quat::inverse(m_parent->getWorldRotation()) * rotation).normalized());
+        else
+            setLocalRotation(rotation);
+    }
+
 #pragma endregion
 
 #pragma region getters
@@ -95,12 +109,7 @@ namespace atlas::core::transform {
     }
 
     void Transform::translateWorld(const vec::Vec3 &delta) {
-        vec::Vec3 worldPos = getWorldPosition() + delta;
-
-        if (m_parent)
-            setLocalPosition(mat4::transformPoint(mat4::inverseTRS(m_parent->getWorldMatrix()), worldPos));
-        else
-            setLocalPosition(worldPos);
+        setWorldPosition(getWorldPosition() + delta);
     }
 
     void Transform::translateWorld(float x, float y, float z) {
@@ -124,13 +133,7 @@ namespace atlas::core::transform {
     }
 
     void Transform::rotateWorld(const quat::Quat &delta) {
-        // Apply world-space rotation
-        quat::Quat newWorldRot = delta * getWorldRotation();
-
-        if (m_parent)
-            setLocalRotation((quat::inverse(m_parent->getWorldRotation()) * newWorldRot).normalized());
-        else
-            setLocalRotation(newWorldRot);
+        setWorldRotation(delta * getWorldRotation());
     }
 
     void Transform::rotateWorld(const vec::Vec3 &eulerRad) {
