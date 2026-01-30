@@ -34,6 +34,11 @@ namespace atlas::core::quat {
         );
     }
 
+    vec::Vec3 Quat::operator*(const vec::Vec3 &rhs) const {
+        auto qXYZ = xyz();
+        return rhs + vec::cross(qXYZ, vec::cross(qXYZ, rhs) + rhs * w) * 2;
+    }
+
     Quat Quat::operator/(float s) const {
         return Quat(x / s, y / s, z / s, w / s);
     }
@@ -109,6 +114,10 @@ namespace atlas::core::quat {
         Quat q = *this;
         q.normalize();
         return q;
+    }
+
+    vec::Vec3 Quat::xyz() const {
+        return vec::Vec3{x,y,z};
     }
 
     #pragma region quaternion functions

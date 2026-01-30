@@ -18,6 +18,8 @@ namespace atlas::core::quat {
         Quat operator-(const Quat &rhs) const;
         Quat operator*(const Quat &rhs) const;
 
+        vec::Vec3 operator*(const vec::Vec3 &rhs) const;
+
         Quat operator*(float s) const;
         Quat operator/(float s) const;
 
@@ -42,6 +44,8 @@ namespace atlas::core::quat {
 
         void normalize();
         Quat normalized() const;
+
+        vec::Vec3 xyz() const;
     };
 
 #pragma region quaternion functions
