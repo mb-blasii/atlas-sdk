@@ -208,6 +208,81 @@ void testTransformInverseOperations() {
     );
 }
 
+void testTranslateLocal_NoParent() {
+    Transform t;
+    t.ctx = (void*)"local_no_parent";
+
+    t.setLocalPosition(Vec3{0, 0, 0});
+    t.translateLocal(Vec3{1, 2, 3});
+
+    assertVec3Equal(
+        t.getWorldPosition(),
+        Vec3{1, 2, 3},
+        "[translateLocal] Local translation without parent should move world position equally"
+    );
+}
+
+void testTranslateLocal_WithRotation() {
+    Transform t;
+    t.ctx = (void*)"local_rotated";
+
+    t.setLocalRotation(fromEuler(Vec3{0, degToRad(90.0f), 0}));
+    t.setLocalPosition(Vec3{0, 0, 0});
+
+    t.translateLocal(Vec3{0, 0, 1});
+
+    assertVec3Equal(
+        t.getWorldPosition(),
+        Vec3{1, 0, 0},
+        "[translateLocal] Local translation should follow rotated local axes"
+    );
+}
+
+void testTranslateWorld_NoParent() {
+    Transform t;
+    t.ctx = (void*)"world_no_parent";
+
+    t.setLocalRotation(fromEuler(Vec3{0, degToRad(90.0f), 0}));
+    t.setLocalPosition(Vec3{0, 0, 0});
+
+    t.translateWorld(Vec3{0, 0, 1});
+
+    assertVec3Equal(
+        t.getWorldPosition(),
+        Vec3{0, 0, 1},
+        "[translateWorld] World translation should ignore object rotation"
+    );
+}
+
+void testTranslateWorld_WithRotatedParent() {
+    Transform parent;
+    Transform child;
+
+    parent.ctx = (void*)"parent";
+    child.ctx  = (void*)"child";
+
+    parent.setLocalRotation(fromEuler(Vec3{0, degToRad(90.0f), 0}));
+    parent.setLocalPosition(Vec3{0, 0, 0});
+
+    child.setParent(&parent);
+    child.setLocalPosition(Vec3{5, 0, 0});
+
+    assertVec3Equal(
+        child.getWorldPosition(),
+        Vec3{0, 0, -5},
+        "[translateWorld] Child world position should reflect parent rotation"
+    );
+
+    child.translateWorld(Vec3{5, 0, 1});
+
+    assertVec3Equal(
+        child.getWorldPosition(),
+        Vec3{5, 0, -4},
+        "[translateWorld] World translation with rotated parent should move along global axes"
+    );
+}
+
+
 int main() {
     testTransformLocalWorld();
     testTransformParentChildTranslation();
@@ -217,6 +292,11 @@ int main() {
     testTransformHierarchyReorder();
     testTransformDirections();
     testTransformInverseOperations();
+
+    testTranslateLocal_NoParent();
+    testTranslateLocal_WithRotation();
+    testTranslateWorld_NoParent();
+    testTranslateWorld_WithRotatedParent();
 
     std::cout << "[transform] All tests passed successfully.\n";
     return 0;

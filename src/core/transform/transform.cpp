@@ -82,6 +82,35 @@ namespace atlas::core::transform {
 
 #pragma endregion
 
+#pragma region translate
+
+    void Transform::translateLocal(const vec::Vec3& delta) {
+        m_localPosition += m_localRotation * delta;
+
+        m_localDirty = true;
+        markDirty();
+    }
+
+    void Transform::translateLocal(float x, float y, float z) {
+        translateLocal(vec::Vec3(x, y, z));
+    }
+
+    void Transform::translateWorld(const vec::Vec3 &delta) {
+        vec::Vec3 worldPos = getWorldPosition() + delta;
+
+        if (m_parent) {
+            m_parent->updateWorldMatrix();
+            setLocalPosition(mat4::transformPoint(mat4::inverseTRS(m_parent->m_worldMatrix), worldPos));
+        } else
+            setLocalPosition(worldPos);
+    }
+
+    void Transform::translateWorld(float x, float y, float z) {
+        translateWorld(vec::Vec3(x, y, z));
+    }
+
+#pragma endregion
+
 #pragma region matrix access
 
     // Matrix access

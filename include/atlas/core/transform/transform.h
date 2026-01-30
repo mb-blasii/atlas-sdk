@@ -40,6 +40,14 @@ namespace atlas::core::transform {
 
         vec::Vec3 getWorldScale();
 
+        // translate
+
+        void translateLocal(const vec::Vec3& delta);
+        void translateLocal(float x, float y, float z);
+
+        void translateWorld(const vec::Vec3& delta);
+        void translateWorld(float x, float y, float z);
+
         // Matrix access
 
         void setLocalMatrix(const mat4::Mat4 &m);
