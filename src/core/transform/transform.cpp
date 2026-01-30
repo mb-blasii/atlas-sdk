@@ -1,7 +1,6 @@
 #include <atlas/core/transform/transform.h>
 
 namespace atlas::core::transform {
-
 #pragma region constructors
 
     // Constructors
@@ -84,7 +83,7 @@ namespace atlas::core::transform {
 
 #pragma region translate
 
-    void Transform::translateLocal(const vec::Vec3& delta) {
+    void Transform::translateLocal(const vec::Vec3 &delta) {
         m_localPosition += m_localRotation * delta;
 
         m_localDirty = true;
@@ -98,15 +97,48 @@ namespace atlas::core::transform {
     void Transform::translateWorld(const vec::Vec3 &delta) {
         vec::Vec3 worldPos = getWorldPosition() + delta;
 
-        if (m_parent) {
-            m_parent->updateWorldMatrix();
-            setLocalPosition(mat4::transformPoint(mat4::inverseTRS(m_parent->m_worldMatrix), worldPos));
-        } else
+        if (m_parent)
+            setLocalPosition(mat4::transformPoint(mat4::inverseTRS(m_parent->getWorldMatrix()), worldPos));
+        else
             setLocalPosition(worldPos);
     }
 
     void Transform::translateWorld(float x, float y, float z) {
         translateWorld(vec::Vec3(x, y, z));
+    }
+
+#pragma endregion
+
+#pragma region rotate
+
+    void Transform::rotateLocal(const quat::Quat &delta) {
+        setLocalRotation((m_localRotation * delta).normalized());
+    }
+
+    void Transform::rotateLocal(const vec::Vec3 &eulerRad) {
+        rotateLocal(quat::fromEuler(eulerRad));
+    }
+
+    void Transform::rotateLocal(float x, float y, float z) {
+        rotateLocal(vec::Vec3{x, y, z});
+    }
+
+    void Transform::rotateWorld(const quat::Quat &delta) {
+        // Apply world-space rotation
+        quat::Quat newWorldRot = delta * getWorldRotation();
+
+        if (m_parent)
+            setLocalRotation((quat::inverse(m_parent->getWorldRotation()) * newWorldRot).normalized());
+        else
+            setLocalRotation(newWorldRot);
+    }
+
+    void Transform::rotateWorld(const vec::Vec3 &eulerRad) {
+        rotateWorld(quat::fromEuler(eulerRad));
+    }
+
+    void Transform::rotateWorld(float x, float y, float z) {
+        rotateWorld(quat::fromEuler({x, y, z}));
     }
 
 #pragma endregion
@@ -164,7 +196,7 @@ namespace atlas::core::transform {
             // local = inverse(parentWorld) * world
             mat4::Mat4 local = mat4::mul(mat4::inverseTRS(m_parent->m_worldMatrix), m_worldMatrix);
             setLocalMatrix(local);
-        }else {
+        } else {
             setLocalMatrix(m_worldMatrix);
         }
     }
@@ -241,7 +273,6 @@ namespace atlas::core::transform {
     }
 
     void Transform::removeChild(const Transform *child) {
-
         for (std::size_t i = 0; i < m_children.size(); ++i) {
             if (m_children[i] == child) {
                 m_children.erase(m_children.begin() + i);

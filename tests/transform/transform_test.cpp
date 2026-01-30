@@ -282,6 +282,83 @@ void testTranslateWorld_WithRotatedParent() {
     );
 }
 
+void testRotateLocal_NoParent() {
+    Transform t;
+    t.ctx = (void*)"rotate_local_no_parent";
+
+    t.rotateLocal(fromEuler(Vec3{0, degToRad(90.0f), 0}));
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{1, 0, 0},
+        "[rotateLocal] Forward should rotate locally on Y axis"
+    );
+}
+
+void testRotateLocal_Cumulative() {
+    Transform t;
+    t.ctx = (void*)"rotate_local_cumulative";
+
+    t.rotateLocal(fromEuler(Vec3{0, degToRad(45.0f), 0}));
+    t.rotateLocal(fromEuler(Vec3{0, degToRad(45.0f), 0}));
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{1, 0, 0},
+        "[rotateLocal] Two 45° rotations should equal one 90° rotation"
+    );
+}
+
+void testRotateWorld_NoParent() {
+    Transform t;
+    t.ctx = (void*)"rotate_world_no_parent";
+
+    t.rotateWorld(fromEuler(Vec3{0, degToRad(90.0f), 0}));
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{1, 0, 0},
+        "[rotateWorld] World rotation without parent should rotate forward correctly"
+    );
+}
+
+void testRotateWorld_WithRotatedParent() {
+    Transform parent;
+    Transform child;
+
+    parent.ctx = (void*)"parent";
+    child.ctx  = (void*)"child";
+
+    child.setParent(&parent);
+    child.translateLocal(5,0,0);
+    parent.rotateLocal(fromEuler(Vec3{0, degToRad(90.0f), 0}));
+
+    assertVec3Equal(
+        child.forward(),
+        Vec3{1, 0, 0},
+        "[rotateWorld] Child forward should change with parent rotation"
+    );
+
+    child.rotateWorld(fromEuler(Vec3{degToRad(90.0f), 0, 0}));
+
+    //After parent + child rotation, right vector of child should point up
+    assertVec3Equal(
+        child.right(),
+        Vec3{0, 1, 0},
+        "[rotateWorld] Child right vector should point to world up"
+    );
+
+    child.rotateLocal(degToRad(-90.0f), 0, 0);
+
+    //After rotating the child along local X, forward vector should point back to world forward
+    assertVec3Equal(
+        child.forward(),
+        Vec3{0, 0, 1},
+        "[rotateWorld] Child forward vector should point to world forward"
+    );
+}
+
+
 
 int main() {
     testTransformLocalWorld();
@@ -297,6 +374,11 @@ int main() {
     testTranslateLocal_WithRotation();
     testTranslateWorld_NoParent();
     testTranslateWorld_WithRotatedParent();
+
+    testRotateLocal_NoParent();
+    testRotateLocal_Cumulative();
+    testRotateWorld_NoParent();
+    testRotateWorld_WithRotatedParent();
 
     std::cout << "[transform] All tests passed successfully.\n";
     return 0;

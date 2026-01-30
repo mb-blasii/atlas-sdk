@@ -48,6 +48,16 @@ namespace atlas::core::transform {
         void translateWorld(const vec::Vec3& delta);
         void translateWorld(float x, float y, float z);
 
+        // rotate
+
+        void rotateLocal(const quat::Quat& delta);
+        void rotateLocal(const vec::Vec3& eulerRad);
+        void rotateLocal(float x, float y, float z);
+
+        void rotateWorld(const quat::Quat& delta);
+        void rotateWorld(const vec::Vec3& eulerRad);
+        void rotateWorld(float x, float y, float z);
+
         // Matrix access
 
         void setLocalMatrix(const mat4::Mat4 &m);
