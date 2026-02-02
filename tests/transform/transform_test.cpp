@@ -358,6 +358,138 @@ void testRotateWorld_WithRotatedParent() {
     );
 }
 
+// Look Rotations
+
+void testTransformLookDirection_WorldForward() {
+    Transform t;
+    t.ctx = (void*)"look_dir_forward";
+
+    t.lookDirection(Vec3{0, 0, 1}, Vec3{0, 1, 0});
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{0, 0, 1},
+        "[lookDirection] Forward should match world forward"
+    );
+
+    assertVec3Equal(
+        t.up(),
+        Vec3{0, 1, 0},
+        "[lookDirection] Up should match world up"
+    );
+}
+
+void testTransformLookDirection_Right() {
+    Transform t;
+    t.ctx = (void*)"look_dir_right";
+
+    t.lookDirection(Vec3{1, 0, 0}, Vec3{0, 1, 0});
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{1, 0, 0},
+        "[lookDirection] Forward should point to +X"
+    );
+
+    assertVec3Equal(
+        t.up(),
+        Vec3{0, 1, 0},
+        "[lookDirection] Up should remain world up"
+    );
+
+    assertVec3Equal(
+        t.right(),
+        Vec3{0, 0, -1},
+        "[lookDirection] Right should point to -Z in LH system"
+    );
+}
+
+void testTransformLookDirection_Diagonal3D() {
+    Transform t;
+    t.ctx = (void*)"look_dir_diag";
+
+    Vec3 dir{1, 1, 1};
+    t.lookDirection(dir, Vec3{0, 1, 0});
+
+    assertVec3Equal(
+        t.forward().normalized(),
+        dir.normalized(),
+        "[lookDirection] Forward should align with diagonal direction"
+    );
+
+    assert(
+        nearlyEqual(dot(t.forward(), t.up()), 0.0f) &&
+        "[lookDirection] Up must be orthogonal to forward"
+    );
+}
+
+void testTransformLookDirection_CustomUp() {
+    Transform t;
+    t.ctx = (void*)"look_dir_custom_up";
+
+    Vec3 forward{0, 0, 1};
+    Vec3 up{1, 0, 0}; // roll of 90°
+
+    t.lookDirection(forward, up);
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{0, 0, 1},
+        "[lookDirection] Forward should still be +Z"
+    );
+
+    assertVec3Equal(
+        t.up(),
+        Vec3{1, 0, 0},
+        "[lookDirection] Up should follow custom up reference"
+    );
+}
+
+void testTransformLookAt_Simple() {
+    Transform t;
+    t.ctx = (void*)"look_at_simple";
+
+    t.setWorldPosition(Vec3{0, 0, 0});
+    t.lookAt(Vec3{0, 0, 10}, Vec3{0, 1, 0});
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{0, 0, 1},
+        "[lookAt] Forward should point toward target"
+    );
+}
+
+void testTransformLookAt_Diagonal() {
+    Transform t;
+    t.ctx = (void*)"look_at_diag";
+
+    t.setWorldPosition(Vec3{1, 2, 3});
+    Vec3 target{4, 6, 3};
+
+    t.lookAt(target, Vec3{0, 1, 0});
+
+    assertVec3Equal(
+        t.forward().normalized(),
+        (target - t.getWorldPosition()).normalized(),
+        "[lookAt] Forward should align with target direction"
+    );
+}
+
+void testTransformLookDirection_ZeroForward() {
+    Transform t;
+    t.ctx = (void*)"look_dir_zero";
+
+    t.setLocalRotation(fromEuler(Vec3{0, degToRad(45.0f), 0}));
+    Vec3 before = t.forward();
+
+    t.lookDirection(Vec3{0, 0, 0}, Vec3{0, 1, 0});
+
+    assertVec3Equal(
+        t.forward(),
+        before,
+        "[lookDirection] Zero forward should not change rotation"
+    );
+}
 
 
 int main() {
@@ -379,6 +511,15 @@ int main() {
     testRotateLocal_Cumulative();
     testRotateWorld_NoParent();
     testRotateWorld_WithRotatedParent();
+
+    //Look Rotations
+    testTransformLookDirection_WorldForward();
+    testTransformLookDirection_Right();
+    testTransformLookDirection_Diagonal3D();
+    testTransformLookDirection_CustomUp();
+    testTransformLookAt_Simple();
+    testTransformLookAt_Diagonal();
+    testTransformLookDirection_ZeroForward();
 
     std::cout << "[transform] All tests passed successfully.\n";
     return 0;

@@ -1,5 +1,7 @@
 #include <atlas/core/transform/transform.h>
 
+#include <atlas/core/math/math.h>
+
 namespace atlas::core::transform {
 #pragma region constructors
 
@@ -142,6 +144,19 @@ namespace atlas::core::transform {
 
     void Transform::rotateWorld(float x, float y, float z) {
         rotateWorld(quat::fromEuler({x, y, z}));
+    }
+
+#pragma endregion
+
+#pragma region look
+
+    void Transform::lookDirection(const vec::Vec3 &forward, const vec::Vec3 &up) {
+        if (math::isZero(forward.length())) return;
+        setWorldRotation(quat::lookRotation(forward, up));
+    }
+
+    void Transform::lookAt(const vec::Vec3& target, const vec::Vec3& up) {
+        lookDirection(target - getWorldPosition(), up);
     }
 
 #pragma endregion
