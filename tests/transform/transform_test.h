@@ -18,6 +18,7 @@ void testRotateLocal_NoParent();
 void testRotateLocal_Cumulative();
 void testRotateWorld_NoParent();
 void testRotateWorld_WithRotatedParent();
+void testRotateAround();
 
 void testTransformLookDirection_WorldForward();
 void testTransformLookDirection_Right();

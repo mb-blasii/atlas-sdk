@@ -358,6 +358,29 @@ void testRotateWorld_WithRotatedParent() {
     );
 }
 
+void testRotateAround() {
+    Transform t;
+    t.ctx = (void*)"rotateAround";
+
+    t.setWorldPosition(Vec3{0, 0, 1});
+
+    Quat rot = fromEuler(Vec3{0, degToRad(90.0f), 0});
+
+    t.rotateAround(Vec3{0, 0, 0}, rot);
+
+    assertVec3Equal(
+        t.getWorldPosition(),
+        Vec3{1, 0, 0},
+        "[rotateAround] Position should orbit correctly around world point"
+    );
+
+    assertVec3Equal(
+        t.forward(),
+        Vec3{1, 0, 0},
+        "[rotateAround] Forward should rotate in world space"
+    );
+}
+
 // Look Rotations
 
 void testTransformLookDirection_WorldForward() {
@@ -511,6 +534,8 @@ int main() {
     testRotateLocal_Cumulative();
     testRotateWorld_NoParent();
     testRotateWorld_WithRotatedParent();
+
+    testRotateAround();
 
     //Look Rotations
     testTransformLookDirection_WorldForward();

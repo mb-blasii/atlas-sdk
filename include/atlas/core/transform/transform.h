@@ -59,6 +59,9 @@ namespace atlas::core::transform {
         void rotateWorld(const vec::Vec3& eulerRad);
         void rotateWorld(float x, float y, float z);
 
+        void rotateAround(const vec::Vec3& worldPoint, const quat::Quat& delta);
+        void rotateAround(const vec::Vec3& worldPoint, const vec::Vec3& eulerRad);
+
         // look
         void lookDirection(const vec::Vec3 &forward, const vec::Vec3 &up = vec::Vec3(0.0f, 1.0f, 0.0f));
         void lookAt(const vec::Vec3& target, const vec::Vec3& up = vec::Vec3(0.0f, 1.0f, 0.0f));

@@ -146,6 +146,20 @@ namespace atlas::core::transform {
         rotateWorld(quat::fromEuler({x, y, z}));
     }
 
+    void Transform::rotateAround(const vec::Vec3& worldPoint, const quat::Quat& delta) {
+        vec::Vec3 worldPos = getWorldPosition();
+        vec::Vec3 offset = worldPos - worldPoint;
+
+        vec::Vec3 rotatedOffset = delta * offset;
+        setWorldPosition(worldPoint + rotatedOffset);
+
+        rotateWorld(delta);
+    }
+
+    void Transform::rotateAround(const vec::Vec3& worldPoint, const vec::Vec3& eulerRad) {
+        rotateAround(worldPoint, quat::fromEuler(eulerRad));
+    }
+
 #pragma endregion
 
 #pragma region look
