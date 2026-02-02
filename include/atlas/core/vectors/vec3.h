@@ -47,6 +47,8 @@ namespace atlas::core::vec {
 
     Vec3 lerp(const Vec3& a, const Vec3& b, float t);
 
+    Vec3 projectOnPlane(const Vec3& v, const Vec3& planeNormal);
+
 #pragma endregion
 
 }

@@ -64,6 +64,15 @@ namespace atlas::core::vec {
 
     Vec3 lerp(const Vec3& a, const Vec3& b, float t) { return a + (b - a) * t; }
 
+    Vec3 projectOnPlane(const Vec3& v, const Vec3& planeNormal) {
+        float lenSq = planeNormal.lengthSq();
+        if (lenSq == 0.0f)
+            return v;
+
+        float scale = dot(v, planeNormal) / lenSq;
+        return v - planeNormal * scale;
+    }
+
 #pragma endregion
 
 }
