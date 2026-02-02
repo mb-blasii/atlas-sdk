@@ -4,6 +4,8 @@
 #include <cassert>
 #include <atlas/core/math/constants.h>
 
+#include <atlas/core/math/math.h>
+
 namespace atlas::core::quat {
 
     // Constructors
@@ -210,6 +212,68 @@ namespace atlas::core::quat {
         Quat qv(v.x, v.y, v.z, 0);
         Quat res = q * qv * inverse(q);
         return vec::Vec3(res.x, res.y, res.z);
+    }
+
+    Quat lookRotation(const vec::Vec3& forward, const vec::Vec3& upAxis) {
+        // 1. normalize forward
+        vec::Vec3 fw = forward.normalized();
+        if (math::isZero(forward.length()))
+            return identity();
+
+        // 2. make up orthogonal to forward
+        vec::Vec3 up = projectOnPlane(upAxis, fw);
+        if (math::isZero(upAxis.length()))
+            up = vec::Vec3{0, 1, 0};
+        else
+            up.normalize();
+
+        // 3. right-handed basis
+        vec::Vec3 right = cross(up, fw).normalized();
+        up = cross(fw, right);
+
+        // 4. basis → quaternion
+        float m00 = right.x;
+        float m01 = up.x;
+        float m02 = fw.x;
+
+        float m10 = right.y;
+        float m11 = up.y;
+        float m12 = fw.y;
+
+        float m20 = right.z;
+        float m21 = up.z;
+        float m22 = fw.z;
+
+        float trace = m00 + m11 + m22;
+        Quat q;
+
+        if (trace > 0.0f) {
+            float s = std::sqrt(trace + 1.0f) * 2.0f;
+            q.w = 0.25f * s;
+            q.x = (m21 - m12) / s;
+            q.y = (m02 - m20) / s;
+            q.z = (m10 - m01) / s;
+        } else if (m00 > m11 && m00 > m22) {
+            float s = std::sqrt(1.0f + m00 - m11 - m22) * 2.0f;
+            q.w = (m21 - m12) / s;
+            q.x = 0.25f * s;
+            q.y = (m01 + m10) / s;
+            q.z = (m02 + m20) / s;
+        } else if (m11 > m22) {
+            float s = std::sqrt(1.0f + m11 - m00 - m22) * 2.0f;
+            q.w = (m02 - m20) / s;
+            q.x = (m01 + m10) / s;
+            q.y = 0.25f * s;
+            q.z = (m12 + m21) / s;
+        } else {
+            float s = std::sqrt(1.0f + m22 - m00 - m11) * 2.0f;
+            q.w = (m10 - m01) / s;
+            q.x = (m02 + m20) / s;
+            q.y = (m12 + m21) / s;
+            q.z = 0.25f * s;
+        }
+
+        return q.normalized();
     }
 
 #pragma endregion

@@ -70,5 +70,7 @@ namespace atlas::core::quat {
     // Rotate a vector
     vec::Vec3 rotate(const vec::Vec3 &v, const Quat &q);
 
+    Quat lookRotation(const vec::Vec3& forward, const vec::Vec3& upAxis);
+
 #pragma endregion
 }
